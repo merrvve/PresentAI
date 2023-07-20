@@ -1,0 +1,375 @@
+<div class="container mt-2 ana">
+  <div class="row">
+
+    <div class="col-sm-5">
+      <div class="card  shadow-sm bg-light text-light rounded bg-opacity-25 m-2">
+        <div class="card-header" [ngStyle]="{  'background-color': step1 ? '#81C784' : 'rgba(0,0,0,.03)'}">
+          <h1>Free Presentation Maker Tool AI - Text Input</h1>
+
+        </div>
+        <div class="card-body">
+          <div class="text-end">
+            <input type="file" accept="application/pdf" class="form-control" (change)="onFileUpload($event)">
+            <button class="btn btn-primary m-1 position-relative " (click)="onExtractText()" data-bs-toggle="modal" data-bs-target="#textModal">
+              Extract Text and Images from Pdf
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                New!
+                <span class="visually-hidden">Updated on 15.06.2023</span>
+              </span>
+            </button>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="textModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                  <div class="modal-header text-light" style="background-color: #FF5252">
+                    <h5 class="modal-title" id="exampleModalLabel">Organise Text Input</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body text-black text-start">
+                    <div *ngIf="input.length<1 && fileToUpload">Loading...</div>
+                    <div>
+                      <h5><strong>{{title}}</strong></h5>
+                    </div>
+                    <div *ngFor="let art of article; let i =index">
+                      <h6 (click)="onShowText(i)" class="art-title p-2 m-1" [ngStyle]="{  'background-color': isSelectedPart(i) ? '#81C784' : 'rgba(0,0,0,.03)'}"><strong>{{art.annotation}}</strong></h6>
+                      <span *ngIf="!isSelectedPart(i)" class="article-part add-part p-2" (click)="onAddPart(i)">+ Include This Part</span>
+                      <span *ngIf="isSelectedPart(i)" class="article-part remove-part p-2" (click)="onRemovePart(i)">- Exclude This Part</span>
+
+                      <p id="{{i}}"><span *ngIf="showId==i">{{art.text}}</span></p>
+                    </div>
+                    <!--<mat-form-field appearance="outline" class="w-100">
+                      <mat-label>Input here</mat-label>
+                      <textarea [(ngModel)]="input" style="border-color:black;" matInput rows="15" (change)="genTitle()"></textarea>-->
+                      <!--(change)="genTitle()"-->
+                      <!--<mat-hint style="color: black;">
+                        Current character count is: {{input.length}}
+                      </mat-hint>
+
+                    </mat-form-field>-->
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="onOrganise()">OK</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            or
+          </div>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label style="color:white;">Input here</mat-label>
+            <textarea [(ngModel)]="input" style="border-color:white;" matInput rows="10" (change)="genTitle()"></textarea>
+            <!--(change)="genTitle()"-->
+            <mat-hint>
+              Current character count is: {{input.length}}
+            </mat-hint>
+
+          </mat-form-field>
+          <div class="text-end">
+            
+          </div>
+          <div class="m-2">
+            <div class="alertBox p-1 rounded" *ngIf="input.length>20000">Important: The first 20000 characters will be used to create the presentation.</div>
+          </div>
+          <div class="text-end">
+
+            Result in:
+            <div class="dropdown" style="display:inline-block;">
+              <button class="btn btn-secondary dropdown-toggle m-1" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="fi fi-{{selectedLanguage}}"></span>
+
+                {{ getLanguageLabel(selectedLanguage) }}
+              </button>
+              <ul class="dropdown-menu">
+                <li *ngFor="let language of supportedLanguages">
+                  <a class="dropdown-item" href="#" (click)="selectLanguage(language.value)">
+                    <span class="fi fi-{{language.value}}"></span>
+                    {{ language.label }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+
+            <!-- Button trigger modal -->
+            <button type="button" (click)="onCreateSlide()" [disabled]="(isLoading && !step1 ) || input.length<1 " class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Create Slides
+            </button>
+            <button class="btn btn-primary m-1" style="font-size:0.1em;" data-bs-toggle="modal" data-bs-target="#textModal"><small><mat-icon>aspect_ratio</mat-icon></small></button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header" style=" background-color: #FF5252;">
+                    <h5 class="modal-title" id="exampleModalLabel">Process</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body text-dark text-lg-start">
+
+
+                    <div class="row">
+                      <div class="col">
+                        <div>
+                          <div class="d-flex align-items-center m-2 " [ngStyle]="{  'font-weight': step1==true ? 'bold' : 'normal'}">
+                            <small>Step 1. Contact with openAI to summarise the content, this may take a few minutes...</small>
+                            <div *ngIf="isLoading && !step1" class="spinner-border spinner-border-sm ms-auto" role="status" aria-hidden="true"></div>
+
+                          </div>
+                        </div>
+                        <div *ngIf="step1" class="bg-success p-1 text-center text-light rounded-pill">Step 1 is successfully finished <mat-icon class="m-0">check_circle</mat-icon></div>
+
+                        <div>
+                          <div class="d-flex align-items-center m-2 " [ngStyle]="{  'font-weight': step2==true ? 'bold' : 'normal'}">
+                            <small>Step 2. Contact with openAI to convert the content into slides, this may take a few minutes...</small>
+                            <small>{{statusLoad}}</small>
+                            <div *ngIf="isLoading && !step2" class="spinner-border spinner-border-sm ms-auto" role="status" aria-hidden="true"></div>
+                          </div>
+                        </div>
+                        <div *ngIf="step2" class="bg-success p-1 text-center text-light rounded-pill">Step 2 is successfully finished <small> <mat-icon>check_circle</mat-icon></small></div>
+
+                        <div>
+                          <div class="d-flex align-items-center m-2 " [ngStyle]="{  'font-weight': step3==true ? 'bold' : 'normal'}">
+                            <small>Step 3. Applying template and deciding layout...</small>
+                            <div *ngIf="isLoading && !step3" class="spinner-border spinner-border-sm ms-auto" role="status" aria-hidden="true"></div>
+                          </div>
+                        </div>
+                        <div *ngIf="step3" class="bg-success p-1 text-center text-light rounded-pill">Step 3 is successfully finished <small> <mat-icon>check_circle</mat-icon></small></div>
+
+                        <div>
+                          <div class="d-flex align-items-center m-2 " [ngStyle]="{  'font-weight': isComplete==true ? 'bold' : 'normal'}">
+                            <small>Finish </small>
+                            <div *ngIf="isLoading && !step3" class="spinner-border spinner-border-sm ms-auto" role="status" aria-hidden="true"></div>
+                          </div>
+                        </div>
+                        <div *ngIf="isComplete" class="bg-success p-1 text-center text-light rounded-pill">Your document is ready! <mat-icon>check_circle</mat-icon></div>
+
+
+                        <div>
+                          {{error}}
+                        </div>
+
+                        <div *ngIf="error.length>1" class="text-end">
+
+                          <button class="btn btn-primary " (click)="onCreateSlide()" [disabled]="isLoading  || input.length<1 ">Try Again</button>
+
+                        </div>
+
+                      </div>
+                      <div class="col" >
+                        <h6>Preview</h6>
+                        <div *ngFor="let slide of slides">
+                          <div class="slideView">
+                            <span class="slideTitle">{{slide.title}}</span><br />
+                            <span class="slideContent">{{slide.content}}</span>
+                          </div>
+
+
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="onCancelRequest()" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" [disabled]="isLoading || !isComplete" (click)="onDownload(downloadFile)"> Download .pptx File <mat-icon>arrow_downward</mat-icon></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="text-start"><small>Note: The language option is experimental and may not produce accurate results.</small></div>
+
+          <!--<div class="form-check">
+    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" (click)="dontSum()" checked>
+    <label class="form-check-label" for="flexRadioDefault1">
+      Don't summarise the text, use all the information
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" (click)="dontSum()" >
+    <label class="form-check-label" for="flexRadioDefault2">
+      Summarise the text considering the key ideas
+    </label>
+  </div>-->
+          <!--<div *ngIf="title.length>0">
+  <mat-form-field appearance="outline" class="m-1 w-100">
+    <mat-label>Title:</mat-label>
+    <input matInput [(ngModel)]="title" placeholder="Title">
+    <mat-hint>This title is automatically generated by OpenAI, modify as you wish</mat-hint>
+  </mat-form-field>
+           </div>-->
+          <div *ngIf="input.length>0" class="temp-choice rounded m-2">
+            <h6>Choice a template (Optional):</h6>
+            <img src="/assets/temp0.png" class="img-thumbnail m-1" (click)="onSelectTemp(0)" [ngStyle]="{  'border': selectedTemp==0 ? '2px solid #D32F2F' : 'none'}" />
+            <img src="/assets/temp1.png" class="img-thumbnail m-1" (click)="onSelectTemp(1)" [ngStyle]="{  'border': selectedTemp==1 ? '2px solid #D32F2F' : 'none'}" />
+            <img src="/assets/temp2.png" class="img-thumbnail m-1" (click)="onSelectTemp(2)" [ngStyle]="{  'border': selectedTemp==2 ? '2px solid #D32F2F' : 'none'}" />
+            <img src="/assets/temp3.png" class="img-thumbnail m-1" (click)="onSelectTemp(3)" [ngStyle]="{  'border': selectedTemp==3 ? '2px solid #D32F2F' : 'none'}" />
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="col-sm-4" #processDiv>
+      <div>
+        <div class="card  bg-light rounded bg-opacity-25 m-2">
+          <div class="card-header" [ngStyle]="{  'background-color': isComplete==true ? '#81C784' : 'rgba(0,0,0,.03)'}">
+            <h2>Image Content</h2>
+
+
+          </div>
+          <div class="card-body">
+            <div *ngIf="fileToUpload" id="imageView" class="m-2 rounded p-1 imagev">
+              <h6>Images in this content: <span class="badge badge-danger">New!</span></h6>
+            </div>
+            <div *ngIf="isStarted" class="m-2 rounded p-1 imagev">
+              <h6>Suggested images for this content: <span class="badge badge-danger">New!</span></h6>
+              <div id="imageView2">
+                <a *ngFor="let image of images; let i = index" (click)="onClickImage(i)">
+                  <img [src]="image.src" [id]="image.id" [class.selected]="isSelected(i)">
+                </a>
+              </div>
+
+
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+
+    <div class="col-sm-3">
+    
+      <div *ngIf="isComplete" class="card  bg-light rounded bg-opacity-25 m-2">
+        <div class="card-header" [ngStyle]="{  'background-color': isComplete==true ? '#81C784' : 'rgba(0,0,0,.03)'}">
+          <h2>Get .pptx File</h2>
+
+        </div>
+        <div class="card-body">
+          <button class="btn btn-success" [disabled]="!isComplete" (click)="onDownload(downloadFile)">
+            <svg fill="#fff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                 width="50px" height="50px" viewBox="0 0 548.291 548.291"
+                 xml:space="preserve">
+<g>
+            <path d="M222.581,262.339c-5.504,0-9.229,0.538-11.176,1.061v35.292c2.312,0.541,5.145,0.715,9.046,0.715
+		c14.374,0,23.237-7.276,23.237-19.519C243.688,268.904,236.051,262.339,222.581,262.339z" />
+            <path d="M486.201,196.116h-13.166V132.59c0-0.399-0.062-0.795-0.115-1.2c-0.021-2.522-0.825-5-2.552-6.96L364.657,3.677
+		c-0.033-0.034-0.064-0.044-0.085-0.075c-0.63-0.704-1.364-1.292-2.143-1.796c-0.229-0.157-0.461-0.286-0.702-0.419
+		c-0.672-0.365-1.387-0.672-2.121-0.893c-0.2-0.052-0.379-0.134-0.577-0.188C358.23,0.118,357.401,0,356.562,0H96.757
+		C84.894,0,75.256,9.649,75.256,21.502v174.613H62.092c-16.971,0-30.732,13.756-30.732,30.73v159.81
+		c0,16.966,13.761,30.736,30.732,30.736h13.164V526.79c0,11.854,9.638,21.501,21.501,21.501h354.776
+		c11.853,0,21.501-9.647,21.501-21.501V417.392h13.166c16.966,0,30.729-13.764,30.729-30.731V226.854
+		C516.93,209.872,503.167,196.116,486.201,196.116z M96.757,21.502h249.054v110.006c0,5.94,4.817,10.751,10.751,10.751h94.972
+		v53.861H96.757V21.502z M278.639,265.544v-22.711h91.863v22.711h-32.63v96.822h-27.128v-96.822H278.639z M270.452,279.195
+		c0,11.696-3.89,21.622-10.987,28.363c-9.228,8.692-22.887,12.604-38.837,12.604c-3.556,0-6.75-0.179-9.228-0.54v42.74h-26.78
+		V244.429c8.336-1.417,20.045-2.488,36.536-2.488c16.68,0,28.555,3.194,36.544,9.575
+		C265.326,257.552,270.452,267.484,270.452,279.195z M81.578,362.362V244.429c8.336-1.417,20.034-2.488,36.526-2.488
+		c16.675,0,28.549,3.194,36.536,9.575c7.627,6.037,12.766,15.968,12.766,27.669c0,11.696-3.903,21.627-10.998,28.368
+		c-9.229,8.692-22.876,12.598-38.842,12.598c-3.536,0-6.746-0.179-9.229-0.535v42.74H81.578V362.362z M451.534,520.962H96.757
+		v-103.57h354.776V520.962z M451.041,362.362l-10.824-21.638c-4.425-8.336-7.276-14.541-10.646-21.454h-0.346
+		c-2.478,6.913-5.503,13.118-9.219,21.454l-9.937,21.638h-30.852l34.573-60.488l-33.329-59.041h31.028l10.458,21.819
+		c3.555,7.268,6.215,13.122,9.05,19.861h0.356c2.835-7.633,5.145-12.953,8.159-19.861l10.109-21.819h30.867l-33.702,58.347
+		l35.466,61.182H451.041z" />
+            <path d="M140.627,279.888c0-10.989-7.628-17.554-21.109-17.554c-5.487,0-9.231,0.538-11.181,1.061v35.297
+		c2.315,0.535,5.145,0.715,9.053,0.715C131.763,299.407,140.627,292.135,140.627,279.888z" />
+</g>
+</svg>
+          </button>
+          <div>
+            <small>{{status.text}}</small>
+          </div>
+          <div class="text-end">
+            <button class="btn btn-primary m-1 " (click)="onCreateSlide()" [disabled]="(isLoading && !step1 ) || input.length<1 || input.length>6000">Try Again</button>
+
+            <button class="btn btn-primary m-1 " (click)="reloadPage()">New Presentation</button>
+            <!--<button class="btn btn-primary m-1 " (click)="ErrorFind()">error</button>
+            <button class="btn btn-primary m-1 " (click)="ErrorFind2()">error2</button>-->
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="isComplete" class="card  bg-light rounded bg-opacity-25 m-2">
+        <div class="card-header" [ngStyle]="{  'background-color': isComplete==true ? '#81C784' : 'rgba(0,0,0,.03)'}">
+          <h2>Comment</h2>
+
+        </div>
+        <div class="card-body">
+          <mat-form-field appearance="outline" class="m-1 w-100">
+            <mat-label style="color:white;">Your opinion:</mat-label>
+            <textarea [(ngModel)]="comment" style="border-color:white;" matInput rows="2"></textarea>
+
+          </mat-form-field>
+
+          <div class="text-end">
+
+            <button class="btn btn-primary m-1 " (click)="onComment()">Send Comment</button>
+            <!--<button class="btn btn-primary m-1 " (click)="ErrorFind()">error</button>
+            <button class="btn btn-primary m-1 " (click)="ErrorFind2()">error2</button>-->
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-10">
+      <div class="card  shadow-sm bg-light text-light rounded bg-opacity-25 m-3 ">
+        <div class="card-header">
+          <h1>How to Use the PresentAI Tool</h1>
+
+        </div>
+        <div class="card-body">
+
+          <h2>Step 1. Text Input</h2>
+          <p>
+            <strong>Enter your content</strong> into the text input area or <strong>select a pdf</strong> file to extract text content and click on the 'Create Slides' button.
+            <br />
+            The maximum allowed character limit for the text is 6000 characters. Please adjust your input accordingly. The current character count is displayed below the textarea field. The 'Create Slides' button will be activated only when the text input is within the specified limits.<br />
+
+            You can also choose from the template designs if you wish. Once you enter the text input, you can browse through the available templates and select the one that best suits your presentation's style and purpose. <br />
+            Ensure that your text input is concise, well-structured, and free from unnecessary details. Keep in mind that shorter and cleaner text inputs tend to yield better results.
+          </p>
+
+          <h2>Step 2. Waiting for the Process</h2>
+
+
+          <h3>1)  Contact with OpenAI to Summarize the Content:</h3>
+          This step involves the tool sending your content to OpenAI for processing and generating a concise summary.
+
+
+          <h3>2) Contact with OpenAI to Convert Content to Slides:</h3>
+          This action establishes a connection with OpenAI's API once again, this time to convert the summarized content into visually appealing slides.
+
+          <h3>3) Applying Template and Deciding Layout:</h3>
+          The PresentAI will apply the desired template and make any necessary adjustments in this step.
+          <h2>Step 3. Getting the Presentaion File (.pptx)</h2>
+          Congratulations!<br />
+          Your file is ready for use. The download will commence automatically. In case it doesn't start, you can manually download the file by clicking on the green button with the .pptx icon.
+          <br /><br />
+          <p>
+            Note: It's important to keep in mind that the quality and accuracy of the generated presentation depend on factors such as the input text, OpenAI's API response, and the chosen template. It is recommended to review and make any necessary adjustments to the generated slides to ensure the desired outcome.
+
+            If you encounter any issues or need further assistance while using the tool, please refer to the "FAQs" and "Contact" pages for support options.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="blank-page-sm"></div>
+<!--<button class="btn btn-secondary m-1 " (click)="onTry()">try</button>-->

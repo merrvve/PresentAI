@@ -1,0 +1,215 @@
+
+/* You can add global styles to this file, and also import other style files */
+
+/* Provide sufficient contrast against white background */
+.mat-input-element {
+  caret-color: #fff;
+}
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: white;
+}
+.mat-form-field {
+  font-family: 'Quicksand', sans-serif;
+}
+.mat-hint {
+    color: #fff;
+}
+bg-mat-green {
+  background-color: #81C784 !important;
+  
+}
+
+bg-mat-normal {
+  background-color: #C51162 !important;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0;
+  border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+bg-mat-pink {
+  background-color: #C51162 !important;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0;
+  border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+
+.btn-success {
+  color: #fff;
+  background-color: #26A69A;
+  border-color: #80CBC4;
+}
+
+  .btn-success:hover {
+    color: #fff;
+    background-color: #80CBC4;
+    border-color: #26A69A;
+  }
+
+  .art-title {
+      cursor: pointer;
+      border-radius: 4px;
+  }
+
+
+  .art-title:hover{
+      background-color: darksalmon;
+  }
+
+  .article-part {
+      cursor: pointer;
+      border-radius:4px;
+  }
+    .add-part:hover {
+      background-color: #80CBC4;
+    
+    }
+    .remove-part:hover {
+        background-color: orangered;
+    }
+
+.slideView {
+    border: 1px solid black;
+    width: 50%;
+    font-size:0.7em;
+    margin-left: 20%;
+    padding: 1% 1% 1% 1%;
+    margin-bottom: 5%;
+}
+.slideView .slideTitle {
+    font-weight: bold;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #FF5252;
+  border-color: #FF8A80
+}
+  .btn-primary:hover, .btn-primary:disabled {
+    color: #fff;
+    background-color: #FF8A80;
+    border-color: #FF5252;
+  }
+
+  .btn-primary:active, .btn-primary:focus {
+    color: #fff;
+    background-color: #FF5252;
+    border-color: #FF8A80
+  }
+  
+
+html, body { color:white; }
+body {
+  color: white;
+  font-family: 'Quicksand', sans-serif;
+}
+.ana {
+  color: white;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.temp-choice {
+  overflow: auto;
+  white-space: nowrap;
+  padding: 10px;
+  border: 1px solid white;
+}
+
+.temp-choice img{
+    max-height: 70px;
+   cursor: pointer;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 25px;
+}
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #FF5252;
+  }
+
+.alertBox {
+  
+  font-size: 0.8em;
+  color: #fff;
+  background-color: #C51162;
+  border-color: #FF5252;
+  align-self:center;
+}
+
+.card-header h1 {
+    font-size:1.1em;
+    font-weight: bold;
+    margin-top:1%;
+}
+
+.card-header h2 {
+    font-size: 1em;
+    margin-top: 1%;
+    font-weight: bold;
+}
+
+.white-placeholder ::ng-deep .mat-select-placeholder {
+  color: white;
+}
+
+
+.imagev img {
+    width: 100%;
+    margin: 2px 2px 2px 2px;
+}
+
+  .imagev img.selected {
+    border: 1px solid red;
+  }
+.imagev {
+    border: 1px solid white;
+}
+
+
+.card-body h2 {
+  font-size: 1em;
+  margin-top: 1%;
+  font-weight: bold;
+  text-decoration:underline;
+}
+.card-body h3 {
+  font-size: 1em;
+  margin-top: 1%;
+  font-weight: bold;
+  font-style:oblique;
+}
+
+.b-example-divider {
+  height: 3rem;
+  background-color: rgba(0, 0, 0, .1);
+  border: solid rgba(0, 0, 0, .15);
+  border-width: 1px 0;
+  box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+}
+
+
+.bi {
+  vertical-align: -.125em;
+  fill: #fff;
+}
+
+.blank-page {
+    height: 50vh;
+}
+.blank-page-sm {
+  height: 8vh;
+}

@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "presentai-3757b": {
+      "hosting": {
+        "matgit": [
+          "presentai-3757b"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "presentai-3757b"
+  }
+}
