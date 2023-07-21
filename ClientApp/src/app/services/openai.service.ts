@@ -6,7 +6,7 @@ import { filter, from, map, Subscription } from 'rxjs';
   providedIn: 'root'
 })
 export class OpenaiService {
-  readonly apiKey: string = "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";
+  readonly apiKey: string = "";
   public configuration = new Configuration({
     apiKey: this.apiKey
   });
