@@ -519,7 +519,7 @@ this.step2openai();
   onSearchGoogle(query: string ) {
     this.http.get("https://www.googleapis.com/customsearch/v1", {
       params: {
-        key: 'AIzaSyAhn4M2k3Soy-HP6wzjglE2sHEoAYkl5Wc',
+        key: '',
         cx: 'f578345e7c8aa424a',
         q: query,
         searchType: 'image'
